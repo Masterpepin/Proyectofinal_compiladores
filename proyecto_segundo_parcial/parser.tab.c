@@ -73,14 +73,18 @@
 #include <stdlib.h>
 #include <string.h>
 extern int yylex(void);  // Declare yylex function from lexer
+extern int yylineno;  // Provided by the lexer when %option yylineno is set
+extern FILE *yyin;  // Input file or stdin
 
+// Error handling function
 int yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+    extern char *yytext; // Access the current token text
+    extern int yylineno; // Access the line number
+    fprintf(stderr, "Error at line %d: syntax error near '%s'\n", yylineno, yytext);
     return 0;
 }
 
-
-#line 84 "parser.tab.c"
+#line 88 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -543,10 +547,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    27,    27,    31,    32,    36,    37,    38,    39,    40,
-      41,    45,    46,    50,    54,    58,    62,    66,    67,    68,
-      69,    70,    71,    72,    76,    77,    78,    82,    83,    84,
-      88,    89,    90,    91
+       0,    31,    31,    35,    36,    40,    41,    42,    43,    44,
+      45,    49,    50,    54,    58,    62,    66,    70,    71,    72,
+      73,    74,    75,    76,    80,    81,    82,    86,    87,    88,
+      92,    93,    94,    95
 };
 #endif
 
@@ -1145,7 +1149,7 @@ yyreduce:
   switch (yyn)
     {
 
-#line 1149 "parser.tab.c"
+#line 1153 "parser.tab.c"
 
       default: break;
     }
@@ -1338,10 +1342,11 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 94 "parser.y"
+#line 98 "parser.y"
 
 
 int main() {
+    // Open input file if provided
     printf("Parsing started...\n");
     int result = yyparse();
     if (result == 0)
@@ -1350,6 +1355,3 @@ int main() {
         printf("Parsing failed.\n");
     return result;
 }
-
-
-

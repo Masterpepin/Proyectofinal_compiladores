@@ -3,12 +3,16 @@
 #include <stdlib.h>
 #include <string.h>
 extern int yylex(void);  // Declare yylex function from lexer
+extern int yylineno;  // Provided by the lexer when %option yylineno is set
+extern FILE *yyin;  // Input file or stdin
 
+// Error handling function
 int yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+    extern char *yytext; // Access the current token text
+    extern int yylineno; // Access the line number
+    fprintf(stderr, "Error at line %d: syntax error near '%s'\n", yylineno, yytext);
     return 0;
 }
-
 %}
 
 %union {
@@ -94,6 +98,7 @@ factor:
 %%
 
 int main() {
+    // Open input file if provided
     printf("Parsing started...\n");
     int result = yyparse();
     if (result == 0)
@@ -102,6 +107,3 @@ int main() {
         printf("Parsing failed.\n");
     return result;
 }
-
-
-

@@ -1,5 +1,10 @@
-IF x < 10 THEN
-WRITE x
+READ x;
+x := 5;
+IF x > 0 THEN
+    WRITE x;
 ELSE
-WRITE y
+    WRITE 0;
 END
+REPEAT
+    x := x - 1;
+UNTIL x = 0;

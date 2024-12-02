@@ -86,7 +86,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "parser.y"
+#line 18 "parser.y"
 
     int num;           // For NUMERO
     char* id;          // For IDENTIFICADOR
