@@ -4,9 +4,11 @@
 #include <string.h>
 extern int yylex(void);  // Declare yylex function from lexer
 
-void yyerror(const char *s) {
+int yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
+    return 0;
 }
+
 %}
 
 %union {
@@ -91,9 +93,15 @@ factor:
 
 %%
 
-int main(void) {
-    yyparse();
-    return 0;
+int main() {
+    printf("Parsing started...\n");
+    int result = yyparse();
+    if (result == 0)
+        printf("Parsing completed successfully.\n");
+    else
+        printf("Parsing failed.\n");
+    return result;
 }
-    
+
+
 

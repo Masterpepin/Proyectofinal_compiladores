@@ -74,11 +74,13 @@
 #include <string.h>
 extern int yylex(void);  // Declare yylex function from lexer
 
-void yyerror(const char *s) {
+int yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
+    return 0;
 }
 
-#line 82 "parser.tab.c"
+
+#line 84 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -541,10 +543,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    25,    25,    29,    30,    34,    35,    36,    37,    38,
-      39,    43,    44,    48,    52,    56,    60,    64,    65,    66,
-      67,    68,    69,    70,    74,    75,    76,    80,    81,    82,
-      86,    87,    88,    89
+       0,    27,    27,    31,    32,    36,    37,    38,    39,    40,
+      41,    45,    46,    50,    54,    58,    62,    66,    67,    68,
+      69,    70,    71,    72,    76,    77,    78,    82,    83,    84,
+      88,    89,    90,    91
 };
 #endif
 
@@ -1143,7 +1145,7 @@ yyreduce:
   switch (yyn)
     {
 
-#line 1147 "parser.tab.c"
+#line 1149 "parser.tab.c"
 
       default: break;
     }
@@ -1336,11 +1338,18 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 92 "parser.y"
+#line 94 "parser.y"
 
 
-int main(void) {
-    yyparse();
-    return 0;
+int main() {
+    printf("Parsing started...\n");
+    int result = yyparse();
+    if (result == 0)
+        printf("Parsing completed successfully.\n");
+    else
+        printf("Parsing failed.\n");
+    return result;
 }
-    
+
+
+

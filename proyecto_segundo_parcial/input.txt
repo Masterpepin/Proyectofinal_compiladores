@@ -1,0 +1,5 @@
+IF x < 10 THEN
+WRITE x
+ELSE
+WRITE y
+END
