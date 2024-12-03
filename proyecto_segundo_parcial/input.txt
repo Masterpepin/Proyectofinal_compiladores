@@ -1,10 +1,13 @@
-READ x;
-x := 5;
-IF x > 0 THEN
-    WRITE x;
-ELSE
-    WRITE 0;
+READ x
+IF y THEN
+WRITE 42
 END
-REPEAT
-    x := x - 1;
-UNTIL x = 0;
+
+z := 10 + 2
+WRITE (5 + 3)
+
+IF a THEN
+b := 7
+ELSE
+c := 4
+END

@@ -2,11 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-extern int yylex(void);  // Declare yylex function from lexer
-extern int yylineno;  // Provided by the lexer when %option yylineno is set
-extern FILE *yyin;  // Input file or stdin
+extern int yylex(void);
+extern int yylineno;  // Line number provided by the lexer
 
-// Error handling function
 int yyerror(const char *s) {
     extern char *yytext; // Access the current token text
     extern int yylineno; // Access the line number
@@ -16,14 +14,15 @@ int yyerror(const char *s) {
 %}
 
 %union {
-    int num;           // For NUMERO
-    char* id;          // For IDENTIFICADOR
+    int num;        // For numeric values
+    char* id;       // For identifiers
 }
 
-%token PLUS MINUS MUL DIV SEMICOLON LPAREN RPAREN 
+%token <num> NUMERO
+%token <id> IDENTIFICADOR
 %token IF THEN ELSE END REPEAT UNTIL READ WRITE
-%token ASSIGN NUMERO IDENTIFICADOR
-%token LT GT EQ NE LE GE
+%token ASSIGN LT GT EQ NE LE GE PLUS MINUS MUL DIV LPAREN RPAREN
+%type <num> expresion expresion_simple termino factor
 
 %%
 
@@ -32,8 +31,12 @@ programa:
     ;
 
 secuencia_instrucciones:
-    secuencia_instrucciones ';' instruccion
-    | instruccion
+    instruccion secuencia_instrucciones_opt
+    ;
+
+secuencia_instrucciones_opt:
+    instruccion secuencia_instrucciones_opt
+    |
     ;
 
 instruccion:
@@ -42,7 +45,7 @@ instruccion:
     | instruccion_asignacion
     | instruccion_read
     | instruccion_write
-    | error
+    | error { yyerror("Invalid instruction"); }
     ;
 
 instruccion_if:
@@ -77,28 +80,31 @@ expresion:
     ;
 
 expresion_simple:
-    expresion_simple '+' termino
-    | expresion_simple '-' termino
+    expresion_simple PLUS termino
+    | expresion_simple MINUS termino
     | termino
     ;
 
 termino:
-    termino '*' factor
-    | termino '/' factor
+    termino MUL factor
+    | termino DIV factor
     | factor
     ;
 
 factor:
-    '(' expresion ')'
+    LPAREN expresion RPAREN
+        { $$ = $2; }
     | NUMERO
+        { $$ = $1; }
     | IDENTIFICADOR
+        { $$ = 0; }
     | error
+        { yyerror("Invalid factor"); $$ = 0; }
     ;
 
 %%
 
 int main() {
-    // Open input file if provided
     printf("Parsing started...\n");
     int result = yyparse();
     if (result == 0)

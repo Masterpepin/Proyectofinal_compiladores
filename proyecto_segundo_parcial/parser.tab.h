@@ -54,30 +54,29 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    PLUS = 258,                    /* PLUS  */
-    MINUS = 259,                   /* MINUS  */
-    MUL = 260,                     /* MUL  */
-    DIV = 261,                     /* DIV  */
-    SEMICOLON = 262,               /* SEMICOLON  */
-    LPAREN = 263,                  /* LPAREN  */
-    RPAREN = 264,                  /* RPAREN  */
-    IF = 265,                      /* IF  */
-    THEN = 266,                    /* THEN  */
-    ELSE = 267,                    /* ELSE  */
-    END = 268,                     /* END  */
-    REPEAT = 269,                  /* REPEAT  */
-    UNTIL = 270,                   /* UNTIL  */
-    READ = 271,                    /* READ  */
-    WRITE = 272,                   /* WRITE  */
-    ASSIGN = 273,                  /* ASSIGN  */
-    NUMERO = 274,                  /* NUMERO  */
-    IDENTIFICADOR = 275,           /* IDENTIFICADOR  */
-    LT = 276,                      /* LT  */
-    GT = 277,                      /* GT  */
-    EQ = 278,                      /* EQ  */
-    NE = 279,                      /* NE  */
-    LE = 280,                      /* LE  */
-    GE = 281                       /* GE  */
+    NUMERO = 258,                  /* NUMERO  */
+    IDENTIFICADOR = 259,           /* IDENTIFICADOR  */
+    IF = 260,                      /* IF  */
+    THEN = 261,                    /* THEN  */
+    ELSE = 262,                    /* ELSE  */
+    END = 263,                     /* END  */
+    REPEAT = 264,                  /* REPEAT  */
+    UNTIL = 265,                   /* UNTIL  */
+    READ = 266,                    /* READ  */
+    WRITE = 267,                   /* WRITE  */
+    ASSIGN = 268,                  /* ASSIGN  */
+    LT = 269,                      /* LT  */
+    GT = 270,                      /* GT  */
+    EQ = 271,                      /* EQ  */
+    NE = 272,                      /* NE  */
+    LE = 273,                      /* LE  */
+    GE = 274,                      /* GE  */
+    PLUS = 275,                    /* PLUS  */
+    MINUS = 276,                   /* MINUS  */
+    MUL = 277,                     /* MUL  */
+    DIV = 278,                     /* DIV  */
+    LPAREN = 279,                  /* LPAREN  */
+    RPAREN = 280                   /* RPAREN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -86,12 +85,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "parser.y"
+#line 16 "parser.y"
 
-    int num;           // For NUMERO
-    char* id;          // For IDENTIFICADOR
+    int num;        // For numeric values
+    char* id;       // For identifiers
 
-#line 95 "parser.tab.h"
+#line 94 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
