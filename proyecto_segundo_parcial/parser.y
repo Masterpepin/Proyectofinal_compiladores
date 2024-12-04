@@ -24,11 +24,11 @@ SyntaxTreeNode *root;        // Nodo raíz del árbol sintáctico
     SyntaxTreeNode *node;    // Para nodos del árbol sintáctico
 }
 
+// Declarar tokens y no terminales
 %token <num> NUMERO
 %token <id> IDENTIFICADOR
 %token IF THEN ELSE END REPEAT UNTIL READ WRITE
 %token ASSIGN LT GT EQ NE LE GE PLUS MINUS MUL DIV LPAREN RPAREN
-
 %type <node> programa secuencia_instrucciones secuencia_instrucciones_opt
 %type <node> instruccion instruccion_if instruccion_repeat instruccion_asignacion
 %type <node> instruccion_read instruccion_write
@@ -76,12 +76,12 @@ instruccion:
 instruccion_if:
     IF expresion THEN secuencia_instrucciones END {
         $$ = crear_nodo("IF");
-        agregar_hijo($$, $2); // Expresión
+        agregar_hijo($$, $2); // Condición
         agregar_hijo($$, $4); // Instrucciones
     }
     | IF expresion THEN secuencia_instrucciones ELSE secuencia_instrucciones END {
         $$ = crear_nodo("IF");
-        agregar_hijo($$, $2); // Expresión
+        agregar_hijo($$, $2); // Condición
         agregar_hijo($$, $4); // Instrucciones (THEN)
         agregar_hijo($$, $6); // Instrucciones (ELSE)
     }
@@ -129,15 +129,18 @@ expresion:
         agregar_hijo($$, $1);
         agregar_hijo($$, $3);
     }
-    | IDENTIFICADOR {
-        agregar_referencia(tabla_simbolos, $1, yylineno);
-        $$ = crear_nodo($1); // Nodo del identificador
-        free($1);
+    | expresion_simple GT expresion_simple {
+        $$ = crear_nodo("GT");
+        agregar_hijo($$, $1);
+        agregar_hijo($$, $3);
     }
-    | NUMERO {
-        char buffer[32];
-        snprintf(buffer, sizeof(buffer), "%d", $1);
-        $$ = crear_nodo(buffer); // Nodo del número
+    | expresion_simple EQ expresion_simple {
+        $$ = crear_nodo("EQ");
+        agregar_hijo($$, $1);
+        agregar_hijo($$, $3);
+    }
+    | expresion_simple {
+        $$ = $1;
     }
     ;
 
@@ -148,12 +151,22 @@ expresion_simple:
         agregar_hijo($$, $1);
         agregar_hijo($$, $3);
     }
+    | expresion_simple MINUS termino {
+        $$ = crear_nodo("MINUS");
+        agregar_hijo($$, $1);
+        agregar_hijo($$, $3);
+    }
     ;
 
 termino:
     factor
     | termino MUL factor {
         $$ = crear_nodo("MUL");
+        agregar_hijo($$, $1);
+        agregar_hijo($$, $3);
+    }
+    | termino DIV factor {
+        $$ = crear_nodo("DIV");
         agregar_hijo($$, $1);
         agregar_hijo($$, $3);
     }
