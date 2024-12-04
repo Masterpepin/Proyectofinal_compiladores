@@ -1,0 +1,8 @@
+READ x
+x := 10 + 2
+WRITE (5 * x)
+IF y THEN
+    z := x + 3
+ELSE
+    z := 7
+END
