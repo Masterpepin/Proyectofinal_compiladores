@@ -85,12 +85,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "parser.y"
+#line 21 "parser.y"
 
-    int num;        // Para valores numéricos
-    char* id;       // Para identificadores
+    int num;                 // Para números
+    char* id;                // Para identificadores
+    SyntaxTreeNode *node;    // Para nodos del árbol sintáctico
 
-#line 94 "parser.tab.h"
+#line 95 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

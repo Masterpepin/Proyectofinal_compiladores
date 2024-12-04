@@ -1,4 +1,5 @@
 %{
+#include "syntax_tree.h"
 #include "parser.tab.h"
 extern int yylineno;
 %}
