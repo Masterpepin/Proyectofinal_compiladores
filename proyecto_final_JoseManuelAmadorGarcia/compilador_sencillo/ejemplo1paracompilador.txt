@@ -1,0 +1,13 @@
+READ x
+IF y THEN
+WRITE 42
+END
+
+z := 10 + 2
+WRITE (5 + 3)
+
+IF a THEN
+b := 7
+ELSE
+c := 4
+END
