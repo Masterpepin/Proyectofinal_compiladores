@@ -85,10 +85,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "parser.y"
+#line 19 "parser.y"
 
-    int num;        // For numeric values
-    char* id;       // For identifiers
+    int num;        // Para valores numéricos
+    char* id;       // Para identificadores
 
 #line 94 "parser.tab.h"
 

@@ -72,17 +72,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbol_table.h"
+
 extern int yylex(void);
-extern int yylineno;  // Line number provided by the lexer
+extern int yylineno;
 
 int yyerror(const char *s) {
-    extern char *yytext; // Access the current token text
-    extern int yylineno; // Access the line number
-    fprintf(stderr, "Error at line %d: syntax error near '%s'\n", yylineno, yytext);
+    extern char *yytext;
+    fprintf(stderr, "Error en la línea %d: %s cerca de '%s'\n", yylineno, s, yytext);
     return 0;
 }
 
-#line 86 "parser.tab.c"
+SymbolTable *tablaSimbolos;
+
+#line 89 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -538,10 +541,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    30,    30,    34,    38,    39,    43,    44,    45,    46,
-      47,    48,    52,    53,    57,    61,    65,    69,    73,    74,
-      75,    76,    77,    78,    79,    83,    84,    85,    89,    90,
-      91,    95,    97,    99,   101
+       0,    33,    33,    42,    46,    47,    51,    52,    53,    54,
+      55,    56,    60,    61,    65,    69,    75,    81,    85,    86,
+      87,    88,    89,    90,    91,    95,    96,    97,   101,   102,
+     103,   107,   109,   111,   116
 };
 #endif
 
@@ -1141,38 +1144,68 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 2: /* programa: secuencia_instrucciones  */
+#line 33 "parser.y"
+                            { 
+        printf("\n--- Análisis finalizado ---\n");
+        printf("Tabla de símbolos:\n");
+        imprimir_tabla(tablaSimbolos);
+        liberar_tabla(tablaSimbolos);
+    }
+#line 1156 "parser.tab.c"
+    break;
+
   case 11: /* instruccion: error  */
-#line 48 "parser.y"
-            { yyerror("Invalid instruction"); }
-#line 1148 "parser.tab.c"
+#line 56 "parser.y"
+            { yyerror("Instrucción inválida"); }
+#line 1162 "parser.tab.c"
+    break;
+
+  case 15: /* instruccion_asignacion: IDENTIFICADOR ASSIGN expresion  */
+#line 69 "parser.y"
+                                   { 
+        agregar_simbolo(tablaSimbolos, (yyvsp[-2].id), yylineno);
+    }
+#line 1170 "parser.tab.c"
+    break;
+
+  case 16: /* instruccion_read: READ IDENTIFICADOR  */
+#line 75 "parser.y"
+                       { 
+        agregar_simbolo(tablaSimbolos, (yyvsp[0].id), yylineno);
+    }
+#line 1178 "parser.tab.c"
     break;
 
   case 31: /* factor: LPAREN expresion RPAREN  */
-#line 96 "parser.y"
+#line 108 "parser.y"
         { (yyval.num) = (yyvsp[-1].num); }
-#line 1154 "parser.tab.c"
+#line 1184 "parser.tab.c"
     break;
 
   case 32: /* factor: NUMERO  */
-#line 98 "parser.y"
+#line 110 "parser.y"
         { (yyval.num) = (yyvsp[0].num); }
-#line 1160 "parser.tab.c"
+#line 1190 "parser.tab.c"
     break;
 
   case 33: /* factor: IDENTIFICADOR  */
-#line 100 "parser.y"
-        { (yyval.num) = 0; }
-#line 1166 "parser.tab.c"
+#line 112 "parser.y"
+        { 
+            agregar_referencia(tablaSimbolos, (yyvsp[0].id), yylineno);
+            (yyval.num) = 0; 
+        }
+#line 1199 "parser.tab.c"
     break;
 
   case 34: /* factor: error  */
-#line 102 "parser.y"
-        { yyerror("Invalid factor"); (yyval.num) = 0; }
-#line 1172 "parser.tab.c"
+#line 117 "parser.y"
+        { yyerror("Factor inválido"); (yyval.num) = 0; }
+#line 1205 "parser.tab.c"
     break;
 
 
-#line 1176 "parser.tab.c"
+#line 1209 "parser.tab.c"
 
       default: break;
     }
@@ -1365,15 +1398,16 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 105 "parser.y"
+#line 120 "parser.y"
 
 
 int main() {
-    printf("Parsing started...\n");
-    int result = yyparse();
-    if (result == 0)
-        printf("Parsing completed successfully.\n");
+    tablaSimbolos = crear_tabla();
+    printf("Inicio del análisis...\n");
+    int resultado = yyparse();
+    if (resultado == 0)
+        printf("Análisis completado con éxito.\n");
     else
-        printf("Parsing failed.\n");
-    return result;
+        printf("Hubo errores en el análisis.\n");
+    return resultado;
 }

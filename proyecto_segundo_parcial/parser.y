@@ -2,20 +2,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbol_table.h"
+
 extern int yylex(void);
-extern int yylineno;  // Line number provided by the lexer
+extern int yylineno;
 
 int yyerror(const char *s) {
-    extern char *yytext; // Access the current token text
-    extern int yylineno; // Access the line number
-    fprintf(stderr, "Error at line %d: syntax error near '%s'\n", yylineno, yytext);
+    extern char *yytext;
+    fprintf(stderr, "Error en la línea %d: %s cerca de '%s'\n", yylineno, s, yytext);
     return 0;
 }
+
+SymbolTable *tablaSimbolos;
 %}
 
 %union {
-    int num;        // For numeric values
-    char* id;       // For identifiers
+    int num;        // Para valores numéricos
+    char* id;       // Para identificadores
 }
 
 %token <num> NUMERO
@@ -27,7 +30,12 @@ int yyerror(const char *s) {
 %%
 
 programa:
-    secuencia_instrucciones
+    secuencia_instrucciones { 
+        printf("\n--- Análisis finalizado ---\n");
+        printf("Tabla de símbolos:\n");
+        imprimir_tabla(tablaSimbolos);
+        liberar_tabla(tablaSimbolos);
+    }
     ;
 
 secuencia_instrucciones:
@@ -36,7 +44,7 @@ secuencia_instrucciones:
 
 secuencia_instrucciones_opt:
     instruccion secuencia_instrucciones_opt
-    |
+    | /* vacío */
     ;
 
 instruccion:
@@ -45,7 +53,7 @@ instruccion:
     | instruccion_asignacion
     | instruccion_read
     | instruccion_write
-    | error { yyerror("Invalid instruction"); }
+    | error { yyerror("Instrucción inválida"); }
     ;
 
 instruccion_if:
@@ -58,11 +66,15 @@ instruccion_repeat:
     ;
 
 instruccion_asignacion:
-    IDENTIFICADOR ASSIGN expresion
+    IDENTIFICADOR ASSIGN expresion { 
+        agregar_simbolo(tablaSimbolos, $1, yylineno);
+    }
     ;
 
 instruccion_read:
-    READ IDENTIFICADOR
+    READ IDENTIFICADOR { 
+        agregar_simbolo(tablaSimbolos, $2, yylineno);
+    }
     ;
 
 instruccion_write:
@@ -97,19 +109,23 @@ factor:
     | NUMERO
         { $$ = $1; }
     | IDENTIFICADOR
-        { $$ = 0; }
+        { 
+            agregar_referencia(tablaSimbolos, $1, yylineno);
+            $$ = 0; 
+        }
     | error
-        { yyerror("Invalid factor"); $$ = 0; }
+        { yyerror("Factor inválido"); $$ = 0; }
     ;
 
 %%
 
 int main() {
-    printf("Parsing started...\n");
-    int result = yyparse();
-    if (result == 0)
-        printf("Parsing completed successfully.\n");
+    tablaSimbolos = crear_tabla();
+    printf("Inicio del análisis...\n");
+    int resultado = yyparse();
+    if (resultado == 0)
+        printf("Análisis completado con éxito.\n");
     else
-        printf("Parsing failed.\n");
-    return result;
+        printf("Hubo errores en el análisis.\n");
+    return resultado;
 }
